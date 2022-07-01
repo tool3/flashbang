@@ -108,12 +108,14 @@ const overlay = new THREE.Mesh(overlayGeometry, overlayMaterial);
 scene.add(overlay);
 
 const element = document.querySelector('.loading-bar');
+const title = document.querySelector('.intro-title');
 const loadingManager = new THREE.LoadingManager(
   (done) => {
     gsap.delayedCall(0.5, () => {
       gsap.to(overlayMaterial.uniforms.uAlpha, { duration: 3, value: 0 });
       element.style.transform = `scaleY(0)`;
       element.classList.add('ended');
+      title.style.opacity = 0;
     });
   },
   (url, loaded, total) => {
