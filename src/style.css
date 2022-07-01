@@ -37,9 +37,15 @@ body {
   font-size: 10em;
   width: 100%;
   font-weight: 500;
-  top: 1em;
+  top: 30%;
   font-family: monospace;
   text-align: center;
   color: white;
   transition: 2s;
+}
+
+@media only screen and (max-width: 600px) {
+  .intro-title {
+    font-size: 2em;
+  }
 }

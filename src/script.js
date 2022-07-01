@@ -14,9 +14,10 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 // Debug
 let flashbang;
 const gui = new dat.GUI({
-  width: 400
+  width: 400,
+  // autoPlace: false
 });
-// gui.close();
+gui.close();
 const debugObject = {
   backlightColor: '#ffffff',
   backlightIntensity: 60.0,
