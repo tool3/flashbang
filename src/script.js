@@ -275,7 +275,7 @@ const tick = () => {
 
   // Render
   renderer.render(scene, camera);
-  effectComposer.render();
+  // effectComposer.render();
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 };
