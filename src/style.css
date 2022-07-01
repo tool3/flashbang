@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Army Rust';
+  src: url('../static/fonts/ARMY_RUST.ttf'); /* EOT file for IE */
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -38,7 +43,7 @@ body {
   width: 100%;
   font-weight: 500;
   top: 30%;
-  font-family: monospace;
+  font-family: 'Army Rust', monospace;
   text-align: center;
   color: white;
   transition: 2s;

@@ -6,15 +6,17 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { gsap } from 'gsap';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
+import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
-import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 /**
  * Base
  */
 // Debug
 let flashbang;
 const gui = new dat.GUI({
-  width: 300,
+  width: 300
   // autoPlace: false
 });
 gui.close();
@@ -121,6 +123,9 @@ const loadingManager = new THREE.LoadingManager(
       element.style.transform = `scaleY(0)`;
       element.classList.add('ended');
       title.style.opacity = 0;
+      setTimeout(() => {
+        title.style.display = 'none';
+      }, 2000);
     });
   },
   (url, loaded, total) => {
@@ -228,6 +233,11 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.physicallyCorrectLights = true;
 
+// renderer.toneMapping = THREE.ACESFilmicToneMapping;
+// renderer.toneMappingExposure = 1;
+renderer.shadowMap.enabled = true;
+// renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 let rendererTargetClass = null;
 
 if (renderer.getPixelRatio() >= 1 && renderer.capabilities.isWebGL2) {
@@ -253,21 +263,26 @@ effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 const renderPass = new RenderPass(scene, camera);
 effectComposer.addPass(renderPass);
 
-const glitchPass = new GlitchPass();
-effectComposer.addPass(glitchPass);
-glitchPass.enabled = false;
+const rgbShaderPass = new ShaderPass(RGBShiftShader);
+effectComposer.addPass(rgbShaderPass);
+rgbShaderPass.enabled = false;
 
 const bloomPass = new UnrealBloomPass();
 bloomPass.strength = 0.3;
 bloomPass.radius = 1;
 bloomPass.threshold = 0.6;
-bloomPass.enabled = false;
 effectComposer.addPass(bloomPass);
+bloomPass.enabled = false;
+// const effectsGui = gui.addFolder('Effects');
+// const rgbGui = effectsGui.addFolder('RGBShaderPass');
+// rgbGui.add(rgbShaderPass, 'enabled');
+// rgbGui.add(rgbShaderPass.uniforms.amount, 'value').name('amount').min(0.0001).max(1);
 
-// gui.add(bloomPass, 'enabled');
-// gui.add(bloomPass, 'strength', 0, 1, 0.001).name('strength');
-// gui.add(bloomPass, 'radius', 0, 1, 0.001).name('strength');
-// gui.add(bloomPass, 'threshold', 0, 1, 0.001).name('strength');
+// const bloomPassGui = effectsGui.addFolder('UnrealBloomPass');
+// bloomPassGui.add(bloomPass, 'enabled');
+// bloomPassGui.add(bloomPass, 'radius').min(0.0001).max(1);
+// bloomPassGui.add(bloomPass, 'threshold').min(-1).max(1);
+// bloomPassGui.add(bloomPass, 'strength').min(0.0001).max(10);
 /**
  * Animate
  */
