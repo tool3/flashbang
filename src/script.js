@@ -14,7 +14,7 @@ import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 // Debug
 let flashbang;
 const gui = new dat.GUI({
-  width: 400,
+  width: 300,
   // autoPlace: false
 });
 gui.close();
