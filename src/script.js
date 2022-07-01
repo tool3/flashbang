@@ -4,12 +4,12 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { gsap } from 'gsap';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
-import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+// import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+// import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+// import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+// import { RGBShiftShader } from 'three/examples/jsm/shaders/RGBShiftShader.js';
+// import { SMAAPass } from 'three/examples/jsm/postprocessing/SMAAPass.js';
+// import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
 /**
  * Base
  */
@@ -250,39 +250,18 @@ if (renderer.getPixelRatio() >= 1 && renderer.capabilities.isWebGL2) {
 
 // post processing
 // target
-const renderTarget = new rendererTargetClass(800, 600, {
-  encoding: THREE.sRGBEncoding,
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter
-});
+// const renderTarget = new rendererTargetClass(800, 600, {
+//   encoding: THREE.sRGBEncoding,
+//   minFilter: THREE.LinearFilter,
+//   magFilter: THREE.LinearFilter
+// });
 
-const effectComposer = new EffectComposer(renderer, renderTarget);
-effectComposer.setSize(sizes.width, sizes.height);
-effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// const effectComposer = new EffectComposer(renderer, renderTarget);
+// effectComposer.setSize(sizes.width, sizes.height);
+// effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-const renderPass = new RenderPass(scene, camera);
-effectComposer.addPass(renderPass);
-
-const rgbShaderPass = new ShaderPass(RGBShiftShader);
-effectComposer.addPass(rgbShaderPass);
-rgbShaderPass.enabled = false;
-
-const bloomPass = new UnrealBloomPass();
-bloomPass.strength = 0.3;
-bloomPass.radius = 1;
-bloomPass.threshold = 0.6;
-effectComposer.addPass(bloomPass);
-bloomPass.enabled = false;
-// const effectsGui = gui.addFolder('Effects');
-// const rgbGui = effectsGui.addFolder('RGBShaderPass');
-// rgbGui.add(rgbShaderPass, 'enabled');
-// rgbGui.add(rgbShaderPass.uniforms.amount, 'value').name('amount').min(0.0001).max(1);
-
-// const bloomPassGui = effectsGui.addFolder('UnrealBloomPass');
-// bloomPassGui.add(bloomPass, 'enabled');
-// bloomPassGui.add(bloomPass, 'radius').min(0.0001).max(1);
-// bloomPassGui.add(bloomPass, 'threshold').min(-1).max(1);
-// bloomPassGui.add(bloomPass, 'strength').min(0.0001).max(10);
+// const renderPass = new RenderPass(scene, camera);
+// effectComposer.addPass(renderPass);
 /**
  * Animate
  */
