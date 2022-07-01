@@ -2,9 +2,7 @@ import './style.css';
 import * as dat from 'lil-gui';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { gsap } from 'gsap';
 /**
  * Base
@@ -128,22 +126,13 @@ const loadingManager = new THREE.LoadingManager(
  */
 // Texture loader
 const textureLoader = new THREE.TextureLoader(loadingManager);
-
-// Draco loader
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('draco/');
-
-// GLTF loader
-const gltfLoader = new GLTFLoader(loadingManager);
-gltfLoader.setDRACOLoader(dracoLoader);
-
 //model
 
-const color = textureLoader.load('/mine/flashbang_lowpoly_Flashbang_BaseColor.png');
-const height = textureLoader.load('/mine/flashbang_lowpoly_Flashbang_Height.png');
-const roughness = textureLoader.load('/mine/flashbang_lowpoly_Flashbang_Roughness.png');
-const normal = textureLoader.load('/mine/flashbang_lowpoly_Flashbang_Normal.png');
-const metallic = textureLoader.load('/mine/flashbang_lowpoly_Flashbang_Metallic.png');
+const color = textureLoader.load('/flashbang/flashbang_lowpoly_Flashbang_BaseColor.png');
+const height = textureLoader.load('/flashbang/flashbang_lowpoly_Flashbang_Height.png');
+const roughness = textureLoader.load('/flashbang/flashbang_lowpoly_Flashbang_Roughness.png');
+const normal = textureLoader.load('/flashbang/flashbang_lowpoly_Flashbang_Normal.png');
+const metallic = textureLoader.load('/flashbang/flashbang_lowpoly_Flashbang_Metallic.png');
 const flashbangMaterial = new THREE.MeshStandardMaterial({
   displacementScale: 0.00001,
   displacementMap: height,
@@ -154,7 +143,7 @@ const flashbangMaterial = new THREE.MeshStandardMaterial({
 });
 
 const fbxLoader = new FBXLoader();
-fbxLoader.load('/mine/flashbang_lowpoly.fbx', (fbx) => {
+fbxLoader.load('/flashbang/flashbang_lowpoly.fbx', (fbx) => {
   console.log(fbx);
   flashbang = fbx;
   fbx.traverse((child) => {
