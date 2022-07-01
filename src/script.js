@@ -4,6 +4,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { gsap } from 'gsap';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass';
+import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 /**
  * Base
  */
@@ -15,11 +19,11 @@ const gui = new dat.GUI({
 // gui.close();
 const debugObject = {
   backlightColor: '#ffffff',
-  backlightIntensity: 0.5,
+  backlightIntensity: 60.0,
   keyLightColor: '#ffffff',
-  keyLightIntensity: 0.5,
+  keyLightIntensity: 60.0,
   fillLightColor: '#ffffff',
-  fillLightIntensity: 0.5,
+  fillLightIntensity: 60.0,
   rotation: 0,
   createFlashbang: () => {
     const mesh = flashbang.clone();
@@ -42,8 +46,8 @@ gui.addColor(debugObject, 'backlightColor').onChange((value) => {
 });
 gui
   .add(debugObject, 'backlightIntensity')
-  .min(0.1)
-  .max(10)
+  .min(10)
+  .max(200)
   .onChange((value) => {
     backLight.intensity = value;
   });
@@ -53,8 +57,8 @@ gui.addColor(debugObject, 'keyLightColor').onChange((value) => {
 });
 gui
   .add(debugObject, 'keyLightIntensity')
-  .min(0.1)
-  .max(10)
+  .min(10)
+  .max(200)
   .onChange((value) => {
     keyLight.intensity = value;
   });
@@ -64,8 +68,8 @@ gui.addColor(debugObject, 'fillLightColor').onChange((value) => {
 });
 gui
   .add(debugObject, 'fillLightIntensity')
-  .min(0.1)
-  .max(10)
+  .min(10)
+  .max(200)
   .onChange((value) => {
     triLight.intensity = value;
   });
@@ -160,18 +164,18 @@ const ambient = new THREE.AmbientLight(0xffffff, 0.2);
 scene.add(ambient);
 
 const keyLight = new THREE.PointLight(debugObject.keyLightColor);
-keyLight.intensity = 0.5;
+keyLight.intensity = debugObject.keyLightIntensity;
 keyLight.position.set(20, -10, -5);
 
 scene.add(keyLight);
 
 const triLight = new THREE.PointLight(debugObject.fillLightColor);
-triLight.intensity = 0.5;
+triLight.intensity = debugObject.fillLightIntensity;
 triLight.position.set(0, -10, -30);
 scene.add(triLight);
 
 const backLight = new THREE.PointLight(debugObject.backlightColor);
-backLight.intensity = 1;
+backLight.intensity = debugObject.backlightIntensity;
 backLight.position.set(-10, -10, 10);
 scene.add(backLight);
 
@@ -221,6 +225,48 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.physicallyCorrectLights = true;
+
+let rendererTargetClass = null;
+
+if (renderer.getPixelRatio() >= 1 && renderer.capabilities.isWebGL2) {
+  rendererTargetClass = THREE.WebGLMultisampleRenderTarget;
+  console.log('using webglMultiSampleTarget');
+} else {
+  console.log('using webgltarget');
+  rendererTargetClass = THREE.WebGLRenderTarget;
+}
+
+// post processing
+// target
+const renderTarget = new rendererTargetClass(800, 600, {
+  encoding: THREE.sRGBEncoding,
+  minFilter: THREE.LinearFilter,
+  magFilter: THREE.LinearFilter
+});
+
+const effectComposer = new EffectComposer(renderer, renderTarget);
+effectComposer.setSize(sizes.width, sizes.height);
+effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+const renderPass = new RenderPass(scene, camera);
+effectComposer.addPass(renderPass);
+
+const glitchPass = new GlitchPass();
+effectComposer.addPass(glitchPass);
+glitchPass.enabled = false;
+
+const bloomPass = new UnrealBloomPass();
+bloomPass.strength = 0.3;
+bloomPass.radius = 1;
+bloomPass.threshold = 0.6;
+bloomPass.enabled = false;
+effectComposer.addPass(bloomPass);
+
+// gui.add(bloomPass, 'enabled');
+// gui.add(bloomPass, 'strength', 0, 1, 0.001).name('strength');
+// gui.add(bloomPass, 'radius', 0, 1, 0.001).name('strength');
+// gui.add(bloomPass, 'threshold', 0, 1, 0.001).name('strength');
 /**
  * Animate
  */
@@ -234,7 +280,7 @@ const tick = () => {
 
   // Render
   renderer.render(scene, camera);
-
+  effectComposer.render();
   // Call tick again on the next frame
   window.requestAnimationFrame(tick);
 };
